@@ -1,0 +1,94 @@
+	<!doctype html>
+
+<html lang='es-ES'>
+	<head>
+		<meta charset='UTF-8'/>
+		<title>Registro </title>
+		<style type='text/css'>
+			@import url('css/style.css');
+		</style>		
+	</head>
+	<body class='fondo'>
+		<header >			
+				<div class='titulo'>Nuevo registro</div>			
+		</header>
+		<section id='caja'>
+			<form  id='f' name='f' method='post' action="./registro" onsubmit="return registrar();">
+				<table>
+					<tr>
+						<td>
+							<label for='user'> Nuevo usuario:</label>
+						</td>
+						<td>
+							<input id='user' name="user" type='text' 
+											placeholder='Nuevo Usuario...'/>
+						</td>
+					</tr>	
+					<tr>
+						<td>
+							<label for='password'>Password:</label>
+						</td>
+						<td>
+							<input id='password' name='password' type='password' 
+											placeholder='Password...'/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for='rePassword'>Repite la Password:</label>
+						</td>
+						<td>
+							<input id='rePassword' name='rePassword' type='password' 
+											placeholder='Password...'/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for='correo'>Correo:</label>
+						</td>
+						<td>
+							<input id='correo' name='correo' type='email' 
+											placeholder='Correo...'/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for='telefono'>Teléfono:</label>
+						</td>
+						<td>
+							<input id='telefono' name='telefono' type='tel' 
+											placeholder='Teléfono...'/>
+						</td>
+					</tr>
+				</table>
+				<input type="hidden" value="si" name="atr"/> 
+				<input type="submit" value="Registrar usuario"/> 
+			</form>
+			<a href='./index.html' style='color:#DF0101;'>Volver a login<a>
+		</section>
+		<script>
+		//Sencillas comprobaciones de seguridad.
+		function registrar(){
+			var password=document.getElementById("password");
+			var rePassword=document.getElementById("rePassword");
+			var user=document.getElementById("user");
+			if((user.value).indexOf('&')!=-1){
+				alert("El caracter & no esta admitido.");
+				return false;
+			}else{
+				if(password.value.localeCompare(rePassword.value)==0){
+					if(user.value==""){
+						alert("Valor no admitido. Vuelva a intentarlo.");
+						return false;
+					}else{
+						return true;
+					}
+				}else{
+					alert("Contraseñas diferentes. Vuelva a intentarlo.");
+					return false;
+				}
+			}
+		}
+		</script>
+	</body>
+</html>
