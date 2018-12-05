@@ -1,0 +1,3 @@
+//Usuario:Identidad:Estado:Puntuacion:
+//0=conectado, 1=Desconexion
+//Respuesta:

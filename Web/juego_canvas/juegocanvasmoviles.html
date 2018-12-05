@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<META HTTP-EQUIV="Cache-Control" CONTENT ="no-cache">
+<meta http-equiv="expires" content="0">
+<meta http-equiv="Pragma" CONTENT="no-cache">
+<meta charset="UTF-8">
+<meta name="MobileOptimized" content="width" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Dibuja y adivina</title>
+</head>
+
+<body>
+<script src="./js/desconectar.js"></script>
+<center><p><font size=4>Juego de adivinar lo que pintas</font></p></center>
+<div id="principal"><center><p>Conectando con servidor...</p></center></div>
+<div id="secundario"></div>
+<p></p>
+<div id="marcador"><center><p><font size=7>0-0</font></p></center></div>
+<script>
+//Funciones del canvas
+var coordX=0;
+var coordY=0;
+var direccionIMG;
+var incremento=0;
+
+function inicializar_lienzo(){
+  var elemento=document.getElementById('lienzo');
+  elemento.addEventListener('touchstart', presionado, false);
+  elemento.addEventListener('touchmove', pintar, false);
+}
+
+function presionado(e){
+ var elemento=document.getElementById('lienzo');
+ coordX=e.changedTouches[0].screenX-elemento.offsetLeft;
+ coordY=e.changedTouches[0].screenY-elemento.offsetTop;
+  lienzo=elemento.getContext('2d');
+  lienzo.beginPath();
+  lienzo.moveTo(coordX, coordY);
+  lienzo.lineTo(coordX-1, coordY-1);
+  lienzo.stroke();
+}
+
+function pintar(e){
+  var elemento=document.getElementById('lienzo');
+  e.preventDefault();
+  lienzo=elemento.getContext('2d');
+  lienzo.beginPath();
+  // aquí va el trazado
+
+  
+  lienzo.moveTo(coordX, coordY);
+  coordX=e.changedTouches[0].screenX-elemento.offsetLeft;
+  coordY=e.changedTouches[0].screenY-elemento.offsetTop;
+
+  lienzo.lineTo(coordX, coordY);
+  lienzo.stroke();
+} 
+ 
+function sendToServer() {
+    var canvas=document.getElementById("lienzo");
+    var data=canvas.toDataURL("image/png");
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST','./imagenCurrent.php',true);
+    xhr.setRequestHeader('Content-Type', 'application/upload');
+    xhr.send(data);
+    resetCanvas();
+    xhr.onreadystatechange=function(){
+        if(xhr.readyState==4){ 
+	    direccionIMG=xhr.responseText;
+	    var primero=document.getElementById("principal");
+ 	    var segundo=document.getElementById("secundario");
+	    incremento++;
+ 	    primero.innerHTML="<IMG SRC="+direccionIMG+"?"+incremento+">";
+	    segundo.innerHTML="<center><p>Contestando...</p></center>";
+            xhr.abort(); 
+            xhr=null;
+
+	    comprobarResp();
+        } 
+    }
+  }
+
+function comprobarResp(){
+    var comprobar = new XMLHttpRequest();
+    comprobar.open('POST','./comprobarRespuesta.php', true);
+    comprobar.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    comprobar.send(null);
+    comprobar.onreadystatechange=function(){
+        if(comprobar.readyState==4){ 
+          var respuesta=comprobar.responseText;
+          var segundo=document.getElementById("secundario");
+          segundo.innerHTML="<center><p>El rival ha contestado:</p><p><font size=4>"+respuesta+"<font></p><p>¿Es correcto?</p><p></p><button onclick='si();'>SI</button>&nbsp;&nbsp;&nbsp;<button onclick='no()'>NO</button></center>";
+        } 
+    }
+
+}
+
+function si(){
+  var ganar=new XMLHttpRequest();
+  ganar.open('POST','./ganar.php', false);
+  ganar.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  ganar.send("respuesta=si&identidad="+leerCookie('identidad'));
+  var respuesta=ganar.responseText;
+  var marcador=document.getElementById('marcador');
+  marcador.innerHTML="<center><p><font size=7>"+respuesta+"</font></p></center>";
+  estado_segundo();
+}
+function no(){
+  var ganar=new XMLHttpRequest();
+  ganar.open('POST','./ganar.php', false);
+  ganar.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  ganar.send("respuesta=no&identidad="+leerCookie('identidad'));
+  var respuesta=ganar.responseText;
+  var marcador=document.getElementById('marcador');
+  marcador.innerHTML="<center><p><font size=7>"+respuesta+"</font></p></center>";
+  estado_segundo();
+}
+
+function resetCanvas() {
+    var canvas = document.getElementById('lienzo');
+    var ctx = canvas.getContext('2d');
+    // just repaint canvas white
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+function adivinar(){
+ var primero=document.getElementById('principal');
+ var segundo=document.getElementById("secundario");
+ incremento++;
+ primero.innerHTML="<IMG SRC='./upload/current.png?"+incremento+"'>";
+ segundo.innerHTML="<center><p>¿Que ha pintado tu rival?</p><input type='text' id='respuesta' value='' autofocus autocomplete='off' /><button onclick='responder();'>Enviar</button></center>";
+}
+
+function responder(){
+
+    var current = new XMLHttpRequest();
+    current.open('POST','./respuesta.php',true);
+    current.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    var resp=document.getElementById('respuesta').value;
+    var segundo=document.getElementById("secundario");
+    segundo.innerHTML="<center><p>Comprobando respuesta...</p></center>";
+    current.send("respuesta="+resp+"&identidad="+leerCookie('identidad'));
+    current.onreadystatechange=function(){
+        if(current.readyState==4){ 
+
+	   var marcador=document.getElementById("marcador");
+    	   var respuesta=current.responseText;
+	   marcador.innerHTML="<center><p><font size=7>"+respuesta+"</font></p></center>";
+           estado_primero();
+        } 
+    }
+
+}
+
+</script>
+
+<script>
+//Funciones Cookie
+function escribirCookie(variable, valor){
+  document.cookie= variable+'='+valor;
+}
+function cambiarUsuario(){
+ var usuario=prompt("¿Como se quiere llamar?","");
+ escribirCookie('usuario', usuario);
+}
+function leerCookie(nombre) {
+         var lista = document.cookie.split(";");
+         for (i in lista) {
+             var busca = lista[i].search(nombre);
+             if (busca > -1) {micookie=lista[i]}
+             }
+         var igual = micookie.indexOf("=");
+         var valor = micookie.substring(igual+1);
+         return valor;
+}
+</script>
+
+<script>
+//AJAX
+//Inicializar cookie
+cambiarUsuario();
+var inicio = null; //Creamos la variable
+inicio = new XMLHttpRequest();
+if(inicio) { //Si tenemos el objeto inicio
+    inicio.open('POST', "./inicio.php", false); //Abrimos la url, true=forma asíncrona
+    inicio.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    inicio.send('usuario='+leerCookie('usuario'));
+//1.identidad 
+//2.estado
+    var resp=inicio.responseText;
+    var identidadinit=resp.slice(0,resp.indexOf(":"));
+    var estadoinit=resp.slice(resp.indexOf(":")+1);
+    escribirCookie('identidad', identidadinit);
+    escribirCookie('estado', estadoinit);
+}
+</script>
+
+<script>
+//Estados iniciales
+function estado_primero(){
+ var primero=document.getElementById("principal");
+ var segundo=document.getElementById("secundario");
+
+ primero.innerHTML="<section id='cajalienzo'><center><canvas style=' border: 1px solid black;cursor:default;' id='lienzo' width='300' height='400' >Su navegador no soporta el elemento canvas</canvas></center></section>";
+ segundo.innerHTML="<center><div class='botones'><button onclick='sendToServer();'>Enviar</button><button onclick='resetCanvas();'>Limpiar</button></div></center>";
+ inicializar_lienzo();
+}
+
+function estado_segundo(){
+ var primero=document.getElementById('principal');
+ var segundo=document.getElementById("secundario");
+
+ primero.innerHTML="<center><p>Esperando a que el rival envie el dibujo</p></center>";
+ segundo.innerHTML="";
+    var current = new XMLHttpRequest();
+    current.open('POST','./comprobarImagen.php',true);
+    current.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    current.send(null);
+    current.onreadystatechange=function(){
+        if(current.readyState==4){ 
+	   adivinar();
+        } 
+    }
+}
+
+//Dependiendo del estado se escribe una cosa u otra
+if(leerCookie('estado')=="1"){
+  estado_primero();
+}else{//estado 3 es que no tienes permiso
+  estado_segundo();
+}
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+<script src="js/jquery.js"></script>
+<script src="js/bootstrap.js"></script>
+
+    <title>Plantilla básica de Bootstrap</title>
+ 
+    <!-- CSS de Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+ 
+    <!-- librerías opcionales que activan el soporte de HTML5 para IE8 -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+<body>
+<!-- Start your code here -->
+
+
+<div class="container">
+    <nav role="navigation" class="navbar navbar-inverse">
+        <div class="navbar-header">
+            <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle collapsed" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand">Logotipo</a>
+        </div>
+
+        <div id="navbarCollapse" class="navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Inicio</a></li>
+                <li class="dropdown">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#" aria-expanded="false">Acerca de <b class="caret"></b></a>
+                    <ul role="menu" class="dropdown-menu">
+                        <li><a href="#">Quienes somos</a></li>
+                        <li><a href="#">Ubicación</a></li>
+                        <li><a href="#">Historia</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+            <form role="search" class="navbar-form navbar-right">
+               <div class="form-group">
+                    <input type="text" placeholder="Search" class="form-control">
+               </div>
+           </form>
+        </div>
+    </nav>
+</div>
+
+</body>
+</html>

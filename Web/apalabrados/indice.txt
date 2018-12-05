@@ -1,0 +1,15 @@
+<html>
+<body>
+<p>
+
+<?php
+$lemario=@fopen("./Diccionarios/lista-sin.txt", "r");
+$matriz=file("./Diccionarios/lista-sin.txt");
+fclose($lemario);
+echo count($matriz);
+
+?>
+
+</p>
+</body>
+</html>

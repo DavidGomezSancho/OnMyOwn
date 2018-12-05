@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<script src="bootstrap-3.3.4-dist/js/jquery.js"></script>
+<script src="bootstrap-3.3.4-dist/js/bootstrap.js"></script>
+<title>Canvas API</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Plantilla básica de Bootstrap</title>
+ 
+    <!-- CSS de Bootstrap -->
+    <link href="bootstrap-3.3.4-dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+</head>
+
+<body style="margin: 0px;">
+
+<nav class="navbar navbar-default">
+   <div class="container-fluid">
+     <div class="navbar-header">
+ 	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+      <a class="navbar-brand" href="#">Dibu.ge</a>
+     </div>
+     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#completa" id="pcompleta" >Pantalla completa </a></li>
+	<li class="active"><a href="#" onclick="sendToServer();">Enviar </a></li>
+	<li class="active"><a href="#" onclick="resetCanvas();">Limpiar </a></li>
+	<li class="active"><a href="#" onclick="resetearTodo();">Reset </a></li>
+        <li><a>Color:</a></li>
+      </ul>
+     <form class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input type="color" id="valor-color" onChange="changeColor();">
+        </div>
+     </form>
+     <ul class="nav navbar-nav">
+        <li><a>Grosor:</a></li>
+     </ul>
+     <form class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input type="range" id="grosor" value="1" min="1" max="10" onChange="changeGrosor();">
+        </div>
+     </form>
+     </div>
+     
+   </div>
+</nav>
+
+<section id="cajalienzo">
+<canvas style="position:relative; border: 1px solid black;cursor:default;" onmousedown="presionado(event);" onmouseup="no_presionado();" onmouseover="dentro();" onmouseout="fuera();" onmousemove="pintar(event);" id="lienzo" >
+Su navegador no soporta el elemento canvas
+</canvas>
+</section>
+<script>
+var presionadov=false;
+var dentrov=false;
+var coordX=0;
+var coordY=0;
+var color='#000000';
+var grosor=1;
+//Esto es prueba
+var c=document.getElementById('lienzo');
+//c.style.width ='100%';
+//c.style.height='100%';
+c.height= window.innerHeight;
+c.width=window.innerWidth;
+//var c=document.getElementById('lienzo');
+//c.height= window.innerHeight;
+//c.width=window.innerWidth;
+//var ctx=c.getContext('2d');
+//ctx.beginPath();
+//ctx.fillStyle='#FF0000';
+//ctx.moveTo(0,0);
+//ctx.lineTo(10,10);
+//ctx.stroke();
+//alert(c.width+"-"+c.height+"-"+window.innerHeight);
+
+function presionado(e){
+var elemento=document.getElementById('lienzo');
+  lienzo=elemento.getContext('2d');
+ coordX=e.layerX;//layerX
+ coordY=e.layerY;
+//alert(coordX+"-"+coordY);
+  lienzo.beginPath();
+  // Hace un punto
+  lienzo.fillStyle=color;
+  lienzo.shadowColor = color;
+//lienzo.moveTo(coordX,coordY);
+  lienzo.fillRect(coordX-grosor+grosor/2, coordY-grosor+grosor/2, grosor, grosor);
+  lienzo.stroke();
+ presionadov=true;
+}
+
+function no_presionado(){
+ presionadov=false;
+}
+
+function dentro(){
+ dentrov=true;
+}
+
+function fuera(){
+ dentrov=false;
+ presionadov=false;
+}
+function pintar(e){
+//var suma = Math.abs(coordX-e.layerX)+Math.abs(coordY-e.layerY);
+ //if(suma>3){
+  var elemento=document.getElementById('lienzo');
+  lienzo=elemento.getContext('2d');
+  if(presionadov==true && dentrov==true){
+    lienzo.beginPath();
+    lienzo.lineCap = "round";
+    lienzo.linejoin = "round";
+    lienzo.shadowColor = color;
+    lienzo.shadowBlur = 2;
+    lienzo.strokeStyle = color;
+    lienzo.lineWidth = grosor;
+    // aquí va el trazado
+    lienzo.moveTo(coordX, coordY);
+    coordX=e.layerX;
+    coordY=e.layerY;
+
+    lienzo.lineTo(coordX, coordY);
+
+    lienzo.stroke();
+  //}
+ }
+} 
+
+
+function changeColor(){
+  color=document.getElementById('valor-color').value;
+}
+
+function changeGrosor(){
+  grosor=parseInt(document.getElementById('grosor').value);
+}
+
+function sendToServer() {
+    var canvas=document.getElementById("lienzo");
+    var data=canvas.toDataURL("image/png");
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST','./imagen.php',true);
+    xhr.setRequestHeader('Content-Type', 'application/upload');
+    xhr.send(data);
+    resetCanvas();
+  }
+function resetearTodo(){
+    document.getElementById('valor-color').value='#000000';
+    color='#000000';
+    document.getElementById('grosor').value='1';
+    grosor=1;
+    resetCanvas();
+}
+
+function resetCanvas() {
+    var canvas = document.getElementById('lienzo');
+    var ctx = canvas.getContext('2d');
+    // just repaint canvas white
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+</script>
+
+<script>
+
+
+// buscamos el metodo para los tipos de navegadores
+function launchFullScreen(element) {
+
+  if(element.requestFullScreen) {
+    element.requestFullScreen();
+  } else if(element.mozRequestFullScreen) {
+    document.documentElement.mozRequestFullScreen();
+  } else if(element.webkitRequestFullScreen) {
+    element.webkitRequestFullScreen();
+  }
+}
+//launchFullScreen(document.documentElement); 
+// la pagina entera
+$(document).keyup(function(tecla) {
+   if(tecla.keyCode == 27){
+      //escape presionado
+	window.location="#";
+   }
+});
+//launchFullScreen(document.getElementById("videoElement")); 
+// un elemento en particular
+//onclick="launchFullScreen(document.getElementById('lienzo'))"
+$("#pcompleta").click(function () {launchFullScreen(document.getElementById('lienzo'))});
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<html>
+<head></head><body>
+<div style="color:#FFFFFF;">|</div>
+<p></p>
+<center><input type=text id="letras" onclick="seleccionar(this);" onkeyup="comprobarIntro(event);" style="text-align:center;" autofocus/><p>
+<button id="boton" onclick="this.disabled = true; this.innerHTML='Calculando...';enviar();" >Calcular palabras</button></p></center>
+<p></p>
+<div id="area" style="font-size:20px;"></div>
+<script>
+//Para seleccionar todo el texto si pinchas una vez
+function seleccionar(obj){ 
+    if(obj.nodeName.toLowerCase()=='textarea' || (obj.nodeName.toLowerCase()=='input' && obj.type=='text')){ 
+        obj.select(); 
+        return; 
+    } 
+    if (window.getSelection) {  
+        var sel = window.getSelection(); 
+        var range = document.createRange(); 
+        range.selectNodeContents(obj); 
+        sel.removeAllRanges(); 
+        sel.addRange(range); 
+    }  
+    else if (document.selection) {  
+        document.selection.empty(); 
+        var range = document.body.createTextRange(); 
+        range.moveToElementText(obj); 
+        range.select(); 
+    } 
+} 
+
+//Enviar datos al servidor y recibirlos
+function enviar(){
+    var escribir=document.getElementById("area");
+    var leer=document.getElementById("letras");
+    var boton=document.getElementById("boton");
+    var data=leer.value;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST','./prin_mejorado.php',true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send('respuesta='+data);
+    xhr.onreadystatechange=function(){
+        if(xhr.readyState==4){ 
+	    palabra=xhr.responseText;
+ 	    escribir.innerHTML="<center><p>"+palabra+"</p></center>";
+	    boton.innerHTML="Calcular palabras";
+	    boton.disabled = false;
+        } 
+    }
+}
+
+function comprobarIntro(e){
+  if(e.keyCode==13){
+	var boton=document.getElementById("boton"); 
+	boton.disabled = true; 
+	boton.innerHTML='Calculando...';
+	enviar();
+  }
+}
+</script>
+</body>
+</html>

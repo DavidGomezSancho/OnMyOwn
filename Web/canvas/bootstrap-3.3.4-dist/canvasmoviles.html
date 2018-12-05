@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<meta charset="UTF-8">
+<meta name="MobileOptimized" content="width" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<head>
+<title>Canvas API</title>
+
+</head>
+
+<body>
+<section id="cajalienzo">
+<canvas style="position:relative; border: 1px solid black;cursor:default;" id="lienzo" width="300" height="400" >
+Su navegador no soporta el elemento canvas
+</canvas>
+</section>
+<script>
+var coordX=0;
+var coordY=0;
+var elemento=document.getElementById('lienzo');
+var color='#000000';
+var grosor=1;
+
+elemento.addEventListener('touchstart', presionado, false);
+elemento.addEventListener('touchmove', pintar, false);
+
+function presionado(e){
+ coordX=e.changedTouches[0].screenX;
+ coordY=e.changedTouches[0].screenY;
+   lienzo.beginPath();
+  // aquí va el rectangulo
+  lienzo.fillStyle=color;
+  lienzo.fillRect(coordX-grosor+1, coordY-grosor+1, grosor, grosor);
+  lienzo.stroke();
+}
+
+function pintar(e){
+  e.preventDefault();
+  lienzo=elemento.getContext('2d');
+  lienzo.beginPath();
+  lienzo.strokeStyle = color;
+  lienzo.lineWidth = grosor;
+  // aquí va el trazado
+
+  
+  lienzo.moveTo(coordX, coordY);
+  coordX=e.changedTouches[0].screenX;
+  coordY=e.changedTouches[0].screenY;
+
+  lienzo.lineTo(coordX, coordY);
+  lienzo.stroke();
+} 
+
+
+function changeColor(){
+  color=document.getElementById('valor-color').value;
+}
+
+function changeGrosor(){
+  grosor=parseInt(document.getElementById('grosor').value);
+}
+
+function sendToServer() {
+    var canvas=document.getElementById("lienzo");
+    var data=canvas.toDataURL("image/png");
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST','./imagen.php',true);
+    xhr.setRequestHeader('Content-Type', 'application/upload');
+    xhr.send(data);
+    resetCanvas();
+  }
+function resetCanvas() {
+    document.getElementById('valor-color').value='#000000';
+    color='#000000';
+    document.getElementById('grosor').value='1';
+    grosor=1;
+    var canvas = document.getElementById('lienzo');
+    var ctx = canvas.getContext('2d');
+    // just repaint canvas white
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+</script>
+<center><div class="botones">
+<input type="color" id="valor-color" onChange="changeColor();">
+<button onclick="sendToServer();">Enviar</button>
+<button onclick="resetCanvas();">Limpiar</button>
+</div></center>
+<p><center>1<input type="range" id="grosor" value="1" min="1" max="3" onChange="changeGrosor();">3</center></p>
+<div id="escribir"></div>
+</body>
+</html>
