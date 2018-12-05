@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:drawableTop="@drawable/icons8microfono1001"
+
+        android:text="Pulse para comunicar su nombre de usuario.\nAl hacer click acepta el tratamiento de sus datos."
+        android:textSize="36sp"
+        tools:layout_editor_absoluteX="70dp"
+        tools:layout_editor_absoluteY="121dp" />
+    <!--android:paddingTop="50dip"-->
+    <!--android:drawablePadding="170dip"-->
+</android.support.constraint.ConstraintLayout>

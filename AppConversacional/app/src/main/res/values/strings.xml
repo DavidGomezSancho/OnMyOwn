@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">App Conversacional</string>
+    <string name="title_activity_validacion">ValidacionActivity</string>
+    <string name="usuario">Usuario</string>
+    <string name="contraseña">Contraseña</string>
+    <string name="titulo_ayuda">Info</string>
+    <string name="mensaje_ayuda">App Conversacional versión 1.0\n\nIconos obtenidos de la página web de Icons8:\nhttps://icons8.com/ \n\nSi desea modificar o eliminar los datos obtenidos por la app póngase en contacto con:\n100292807@alumnos.uc3m.es</string>
+</resources>
